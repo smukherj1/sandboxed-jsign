@@ -11,10 +11,11 @@ import (
 )
 
 var (
-	serverKey  = flag.String("key", "/apps/data/secrets/server.key", "Server private key.")
-	serverCert = flag.String("cert", "/apps/data/secrets/server.crt", "Server certificate.")
-	tsAddr     = flag.String("ts-addr", ":8080", "Address to serve timestamp requests.")
-	kmsAddr    = flag.String("kms-addr", ":8081", "Address to server Cloud KMS requests.")
+	serverKey = flag.String("key", "", "Server private key.")
+	tsCert    = flag.String("ts-cert", "", "Server certificate.")
+	kmsCert   = flag.String("kms-cert", "", "Server certificate.")
+	tsAddr    = flag.String("ts-addr", ":8080", "Address to serve timestamp requests.")
+	kmsAddr   = flag.String("kms-addr", ":8081", "Address to server Cloud KMS requests.")
 )
 
 func timestampHandler(w http.ResponseWriter, req *http.Request) {
@@ -27,7 +28,7 @@ func tsServer(wg *sync.WaitGroup) {
 	defer wg.Done()
 	http.HandleFunc("/", timestampHandler)
 	log.Printf("Launching timestamp server at %v.", *tsAddr)
-	if err := http.ListenAndServeTLS(*tsAddr, *serverCert, *serverKey, nil); err != nil {
+	if err := http.ListenAndServeTLS(*tsAddr, *tsCert, *serverKey, nil); err != nil {
 		log.Fatalf("Error starting timestamp server: %v", err)
 	}
 }
@@ -44,7 +45,7 @@ func kmsServer(wg *sync.WaitGroup) {
 	r.GET("/", kmsHandler)
 	r.POST("/", kmsHandler)
 	log.Printf("Launching Cloud KMS server at %v.", *kmsAddr)
-	if err := r.RunTLS(*kmsAddr, *serverCert, *serverKey); err != nil {
+	if err := r.RunTLS(*kmsAddr, *kmsCert, *serverKey); err != nil {
 		log.Fatalf("Error starting Cloud KMS server: %v", err)
 	}
 }
@@ -54,8 +55,11 @@ func main() {
 	if len(*serverKey) == 0 {
 		log.Fatalf("--key is required.")
 	}
-	if len(*serverCert) == 0 {
-		log.Fatalf("--cert is required.")
+	if len(*kmsCert) == 0 {
+		log.Fatalf("--kms-cert is required.")
+	}
+	if len(*tsCert) == 0 {
+		log.Fatalf("--ts-cert is required.")
 	}
 	if len(*tsAddr) == 0 {
 		log.Fatalf("--ts-addr is required.")
