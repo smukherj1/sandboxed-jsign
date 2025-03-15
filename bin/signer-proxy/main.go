@@ -35,15 +35,19 @@ func tsServer(wg *sync.WaitGroup) {
 
 func kmsHandler(c *gin.Context) {
 	body, _ := io.ReadAll(c.Request.Body)
-	log.Printf("KMS request %v %v: %v", c.Request.Method, c.Request.URL.String(), string(body))
+	p := c.Param("project")
+	l := c.Param("location")
+	kr := c.Param("keyring")
+	k := c.Param("key")
+	kv := c.Param("keyversion")
+	log.Printf("KMS sign request(project=%v, location=%v, keyring=%v, key=%v, keyversion=%v): %v", p, l, kr, k, kv, string(body))
 	c.String(http.StatusNotImplemented, "KMS handler is not implemented")
 }
 
 func kmsServer(wg *sync.WaitGroup) {
 	defer wg.Done()
 	r := gin.Default()
-	r.GET("/", kmsHandler)
-	r.POST("/", kmsHandler)
+	r.POST("/v1/projects/:project/locations/:location/keyRings/:keyring/cryptoKeys/:key/cryptoKeyVersions/:keyversion", kmsHandler)
 	log.Printf("Launching Cloud KMS server at %v.", *kmsAddr)
 	if err := r.RunTLS(*kmsAddr, *kmsCert, *serverKey); err != nil {
 		log.Fatalf("Error starting Cloud KMS server: %v", err)

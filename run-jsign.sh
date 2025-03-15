@@ -3,9 +3,9 @@
 args=(
   "-jar" "jsign.jar"
   "--storetype" "GOOGLECLOUD"
-  "--keystore" "projects/bundle/locations/default/keyRings/key-2025"
+  "--keystore" "projects/default/locations/default/keyRings/default"
   "--storepass=default"
-  "-a" "gulugulu"
+  "--alias" "default/cryptoKeyVersions/0"
   "--certfile=sign.crt"
   "-t" "10.0.0.3"
   "hello.ps1"
