@@ -8,7 +8,7 @@ KMS_LOCAL_PORT="9000"
 TS_IP="10.0.0.3"
 TS_LOCAL_PORT="9001"
 
-# docker network rm docker-br0
+docker network rm ${BRIDGE} > /dev/null 2>&1 || echo "Ignoring error deleting non-existent docker bridge"
 docker network create -d bridge ${BRIDGE} -o com.docker.network.bridge.name=${BRIDGE}
 sudo iptables-save > ~/iptables.txt
 

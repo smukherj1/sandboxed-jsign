@@ -1,4 +1,4 @@
-module github.com/smukherj/signer
+module github.com/smukherj1/sandboxed-jsign
 
 go 1.24.1
 

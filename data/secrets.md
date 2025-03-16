@@ -4,9 +4,10 @@
 openssl genrsa -out server.key 2048
 ```
 
-* Generate the server certificate
+* Generate the server certificates
 ```
-openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
+openssl req -new -x509 -sha256 -key server.key -out googlekms.crt -days 3650
+openssl req -new -x509 -sha256 -key server.key -out ts.crt -days 3650
 ```
 
 * Generate the sign key
